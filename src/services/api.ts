@@ -1,18 +1,18 @@
 import { FlomoApiResponse, OpenAIResponse, Settings } from "../types";
 
+// API服务 - 处理与外部API的通信
 export async function sendToFlomo(
   content: string,
   settings: Pick<Settings, "flomoUserId" | "flomoApiKey">
 ): Promise<FlomoApiResponse> {
+  // 实现发送到Flomo的逻辑
   const url = `https://flomoapp.com/iwh/${settings.flomoUserId}/${settings.flomoApiKey}/`;
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      content: content, // Remove encodeURIComponent as Flomo API handles encoding
-    }),
+    body: JSON.stringify({ content }),
   });
 
   if (!response.ok) {

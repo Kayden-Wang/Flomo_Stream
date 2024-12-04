@@ -1,8 +1,10 @@
+// 获取默认窗口大小
+// 根据屏幕尺寸返回合适的编辑器窗口大小
 export function getDefaultWindowSize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
-  // For very small screens (mobile)
+  // 移动设备屏幕
   if (width < 640) {
     return {
       width: width - 40,
@@ -10,7 +12,7 @@ export function getDefaultWindowSize() {
     };
   }
 
-  // For small screens (tablets)
+  // 平板设备屏幕
   if (width < 1024) {
     return {
       width: Math.min(360, width - 80),
@@ -18,7 +20,7 @@ export function getDefaultWindowSize() {
     };
   }
 
-  // For medium screens
+  // 中等尺寸屏幕
   if (width < 1440) {
     return {
       width: 380,
@@ -26,7 +28,7 @@ export function getDefaultWindowSize() {
     };
   }
 
-  // For large screens
+  // 大尺寸屏幕
   return {
     width: 400,
     height: Math.min(540, height - 120),

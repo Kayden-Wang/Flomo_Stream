@@ -1,5 +1,6 @@
 import { Translations } from "../types";
 
+// 国际化翻译配置
 export const translations: Translations = {
   createNote: {
     en: "Create Note",

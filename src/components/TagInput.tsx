@@ -1,45 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { useFlomoStore } from '../store';
+import React, { useState, useEffect } from "react";
+import { X } from "lucide-react";
+import { useFlomoStore } from "../store";
 
+// 标签输入组件 - 用于管理笔记标签
 export const TagInput: React.FC = () => {
   const { note, setNote, settings, setSettings } = useFlomoStore();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
-    // Initialize note tags with default tag if empty
+    // 初始化笔记标签 - 如果没有标签则使用默认标签
     if (note.tags.length === 0 && settings.savedTags?.length > 0) {
       setNote({ tags: [settings.savedTags[0]] });
     }
   }, [settings.savedTags]);
 
+  // 添加新标签
   const handleAddTag = (tag: string) => {
     const newTag = tag.trim();
     if (newTag && !note.tags.includes(newTag)) {
+      // 更新笔记标签
       const updatedTags = [...note.tags, newTag];
       setNote({ tags: updatedTags });
-      
-      // Save to saved tags if not already present
+
+      // 保存到已保存的标签列表中
       if (!settings.savedTags?.includes(newTag)) {
         const updatedSavedTags = [...(settings.savedTags || []), newTag];
         setSettings({ savedTags: updatedSavedTags });
-        chrome.storage.sync.set({ 
-          settings: { 
-            ...settings, 
-            savedTags: updatedSavedTags 
-          } 
+        // 同步到Chrome存储
+        chrome.storage.sync.set({
+          settings: {
+            ...settings,
+            savedTags: updatedSavedTags,
+          },
         });
       }
     }
-    setInputValue('');
+    setInputValue("");
   };
 
+  // 移除标签
   const handleRemoveTag = (tagToRemove: string) => {
-    setNote({ tags: note.tags.filter(tag => tag !== tagToRemove) });
+    setNote({ tags: note.tags.filter((tag) => tag !== tagToRemove) });
   };
 
+  // 处理键盘事件 - 回车或空格添加标签
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleAddTag(inputValue);
     }
@@ -48,7 +54,7 @@ export const TagInput: React.FC = () => {
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2 mb-2">
-        {note.tags.map(tag => (
+        {note.tags.map((tag) => (
           <span
             key={tag}
             className="inline-flex items-center px-2.5 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 transition-colors duration-200"
@@ -65,15 +71,17 @@ export const TagInput: React.FC = () => {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-2">
-        {settings.savedTags?.filter(tag => !note.tags.includes(tag)).map(tag => (
-          <button
-            key={tag}
-            onClick={() => handleAddTag(tag)}
-            className="px-2.5 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:text-blue-800 dark:hover:text-blue-200 transition-colors duration-200"
-          >
-            #{tag}
-          </button>
-        ))}
+        {settings.savedTags
+          ?.filter((tag) => !note.tags.includes(tag))
+          .map((tag) => (
+            <button
+              key={tag}
+              onClick={() => handleAddTag(tag)}
+              className="px-2.5 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:text-blue-800 dark:hover:text-blue-200 transition-colors duration-200"
+            >
+              #{tag}
+            </button>
+          ))}
       </div>
 
       <input
