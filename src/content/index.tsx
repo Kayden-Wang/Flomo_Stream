@@ -1,24 +1,22 @@
-import React, { useEffect } from "react";
-import { createRoot } from "react-dom/client";
-import { Toaster } from "react-hot-toast";
-import { FloatingBall } from "../components/FloatingBall";
-import { NoteEditor } from "../components/NoteEditor";
-import { useFlomoStore } from "../store";
-import { initializeTextSelection } from "../utils/selection";
-import "../index.css";
+import React, { useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Toaster } from 'react-hot-toast';
+import { FloatingBall } from '../components/FloatingBall';
+import { NoteEditor } from '../components/NoteEditor';
+import { useFlomoStore } from '../store';
+import { initializeTextSelection } from '../utils/selection';
+import '../index.css';
 
-// 主应用组件
 const App: React.FC = () => {
-  const { setNote } = useFlomoStore();  // 获取更新笔记的方法
+  const { setNote } = useFlomoStore();
 
   useEffect(() => {
-    // 初始化文本选择功能
+    // Initialize text selection
     initializeTextSelection();
 
-    // 等待页面完全加载后获取标题
+    // Wait for page to be fully loaded before getting title
     const observer = new MutationObserver((mutations) => {
-      if (document.readyState === "complete") {
-        // 设置当前页面的标题和URL
+      if (document.readyState === 'complete') {
         setNote({
           title: document.title,
           url: window.location.href,
@@ -27,20 +25,18 @@ const App: React.FC = () => {
       }
     });
 
-    // 观察文档变化
     observer.observe(document, {
       childList: true,
       subtree: true,
     });
 
-    // 监听来自后台脚本的消息
+    // Listen for page info from background script
     chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === "PAGE_INFO") {
-        setNote(message.payload);  // 更新笔记信息
+      if (message.type === 'PAGE_INFO') {
+        setNote(message.payload);
       }
     });
 
-    // 清理函数
     return () => {
       observer.disconnect();
       chrome.runtime.onMessage.removeListener(() => {});
@@ -48,29 +44,56 @@ const App: React.FC = () => {
   }, [setNote]);
 
   return (
-    // 创建一个不影响页面交互的容器
-    <div
-      id="flomo-stream-container"
-      className="fixed inset-0 pointer-events-none"
-    >
-      {/* 启用事件交互的内容区域 */}
+    <div id="flomo-stream-container" className="fixed inset-0 pointer-events-none" style={{ zIndex: 2147483647 }}>
       <div className="pointer-events-auto">
-        <FloatingBall />  {/* 浮动球组件 */}
-        <NoteEditor />    {/* 笔记编辑器组件 */}
-        <Toaster position="top-right" />       {/* 消息提示组件 */}
+        <FloatingBall />
+        <NoteEditor />
+        <Toaster 
+          position="top-right" 
+          containerStyle={{
+            zIndex: 2147483647,
+            top: 20,
+            right: 20,
+          }}
+          toastOptions={{
+            style: {
+              background: '#1e2433',
+              color: '#fff',
+              borderRadius: '8px',
+              border: '1px solid rgba(107, 114, 128, 0.3)',
+              zIndex: 2147483647,
+            },
+            success: {
+              iconTheme: {
+                primary: '#10B981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#EF4444',
+                secondary: '#fff',
+              },
+            },
+            loading: {
+              iconTheme: {
+                primary: '#3B82F6',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
       </div>
     </div>
   );
 };
 
-// 初始化函数
+// Wait for DOM to be ready
 const init = () => {
-  // 创建根容器
-  const container = document.createElement("div");
-  container.id = "flomo-stream-root";
+  const container = document.createElement('div');
+  container.id = 'flomo-stream-root';
   document.body.appendChild(container);
 
-  // 渲染React应用
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
@@ -79,7 +102,7 @@ const init = () => {
   );
 };
 
-// 检查是否已经注入，避免重复注入
-if (!document.getElementById("flomo-stream-root")) {
+// Check if the script has already been injected
+if (!document.getElementById('flomo-stream-root')) {
   init();
 }
