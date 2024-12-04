@@ -2,6 +2,8 @@
 
 一个帮助你快速收集网页内容并通过 AI 总结发送到 Flomo 的浏览器扩展。
 
+![image](assets/样例.png)
+
 ## 🌟 特性
 
 - 🎯 一键收藏网页内容到 Flomo
@@ -16,24 +18,27 @@
 - **框架**: React + TypeScript
 - **状态管理**: Zustand
 - **样式**: Tailwind CSS
-- **API集成**: 
+- **API 集成**:
   - OpenAI API (文章摘要)
   - Flomo API (笔记同步)
 
 ## 📦 安装
 
 1. 克隆仓库：
+
 ```bash
 git clone [repository-url]
 cd flomo-stream
 ```
 
 2. 安装依赖：
+
 ```bash
 pnpm install
 ```
 
 3. 构建扩展：
+
 ```bash
 pnpm run build
 ```
@@ -49,6 +54,7 @@ pnpm run build
 首次使用需要配置以下内容：
 
 1. **Flomo 配置**
+
    - Flomo User ID
    - Flomo API Key
 
@@ -61,16 +67,19 @@ pnpm run build
 ## 🎯 使用方法
 
 1. **收藏网页内容**
+
    - 点击浮动球打开编辑器
    - 自动获取页面标题和 URL
    - 选择文本自动添加到摘录
 
 2. **AI 摘要**
+
    - 点击 AI 摘要按钮
    - 等待生成摘要
    - 可以编辑生成的摘要
 
 3. **标签管理**
+
    - 使用预设标签
    - 添加自定义标签
    - 快速筛选标签
@@ -111,16 +120,6 @@ src/
 4. 编辑器处理用户输入
 5. 调用 API 服务处理数据
 6. 将内容同步到 Flomo
-
-## 🤝 贡献
-
-欢迎贡献代码或提出建议！请遵循以下步骤：
-
-1. Fork 项目
-2. 创建特性分支
-3. 提交变更
-4. 推送到分支
-5. 提交 Pull Request
 
 ## 📝 开源协议
 

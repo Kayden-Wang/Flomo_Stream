@@ -4,21 +4,15 @@ import { Toaster } from "react-hot-toast";
 import { FloatingBall } from "../components/FloatingBall";
 import { NoteEditor } from "../components/NoteEditor";
 import { useFlomoStore } from "../store";
-import { initializeTextSelection } from "../utils/selection";
 import "../index.css";
 
-// 主应用组件
 const App: React.FC = () => {
   const { setNote } = useFlomoStore();
 
   useEffect(() => {
-    // 初始化文本选择功能 - 用于捕获用户选中的文本
-    initializeTextSelection();
-
-    // 监听页面加载完成
-    const observer = new MutationObserver((mutations) => {
+    // Wait for page to be fully loaded before getting title
+    const observer = new MutationObserver(() => {
       if (document.readyState === "complete") {
-        // 设置初始笔记信息 - 包含页面标题和URL
         setNote({
           title: document.title,
           url: window.location.href,
@@ -35,19 +29,19 @@ const App: React.FC = () => {
     // Listen for page info from background script
     chrome.runtime.onMessage.addListener((message) => {
       if (message.type === "PAGE_INFO") {
-        // 更新笔记信息
-        setNote(message.payload);
+        setNote({
+          title: message.payload.title,
+          url: message.payload.url,
+        });
       }
     });
 
     return () => {
-      // 清理监听器
       observer.disconnect();
       chrome.runtime.onMessage.removeListener(() => {});
     };
   }, [setNote]);
 
-  // 渲染浮动球和笔记编辑器
   return (
     <div
       id="flomo-stream-container"
@@ -97,14 +91,12 @@ const App: React.FC = () => {
   );
 };
 
-// 初始化应用
+// Wait for DOM to be ready
 const init = () => {
-  // 创建根容器
   const container = document.createElement("div");
   container.id = "flomo-stream-root";
   document.body.appendChild(container);
 
-  // 渲染React应用
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
@@ -113,7 +105,7 @@ const init = () => {
   );
 };
 
-// 检查是否已经注入,避免重复注入
+// Check if the script has already been injected
 if (!document.getElementById("flomo-stream-root")) {
   init();
 }
